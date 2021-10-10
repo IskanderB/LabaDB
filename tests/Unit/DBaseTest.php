@@ -14,8 +14,8 @@ class DBaseTest extends \PHPUnit\Framework\TestCase
 
     }
 
-    public function testHello(){
-        $this->assertEquals("Hello Test!", $this->DBase->test());
+    public function testCreate(){
+        $this->assertEquals("Hello Test!", $this->DBase->create('test'));
     }
 
 
