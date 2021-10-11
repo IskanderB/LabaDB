@@ -9,21 +9,10 @@
     <br><br>
     <div style="text-align: center;">
         <div>
-            <label>Make directory</label>
+            <label>Make db files</label>
             <form method="POST" action="{{ route('testbl.makedir') }}">
                 @csrf
                 <input id="directory" type="text"  name="directory">
-                <button type="submit">
-                    Ok
-                </button>
-            </form>
-        </div>
-        <br><br>
-        <div>
-            <label>Make db files</label>
-            <form method="POST" action="{{ route('testbl.makefiles') }}">
-                @csrf
-                <input id="directory" type="text"  name="directory" value="test_db" type="hidden">
                 <ul>
                     <li>
                         <input id="first" type="text"  name="first">

@@ -6,7 +6,7 @@ class DBaseTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->DBase = new \App\Models\DBase();
+        $this->DBase = new \App\Models\DB();
     }
 
     protected function tearDown(): void
