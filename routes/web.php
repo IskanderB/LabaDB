@@ -25,4 +25,5 @@ Route::name('testbl.')->group(function () {
     Route::post('/testbl/makefiles', 'App\Http\Controllers\TestBL\BLController@makefiles')->name('makefiles');
     Route::post('/testbl/rmdir', 'App\Http\Controllers\TestBL\BLController@rmdir')->name('rmdir');
     Route::post('/testbl/cleardir', 'App\Http\Controllers\TestBL\BLController@cleardir')->name('cleardir');
+    Route::get('/testbl/insert', 'App\Http\Controllers\TestBL\BLController@insert')->name('insert');
 });
