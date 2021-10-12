@@ -13,18 +13,6 @@ class Insert extends DB
     public function insert(array $data):void {
         $id = $this->inBackup($data);
         $this->inColumns($id, $data);
-//        $handle = @fopen($path, "r");
-//        if ($handle) {
-//            while (($buffer = fgets($handle, 4096)) !== false) {
-//                echo $buffer;
-//            }
-//            if (!feof($handle)) {
-//                echo "Ошибка: fgets() неожиданно потерпел неудачу\n";
-//            }
-//            fclose($handle);
-//        }
-//        dd();
-
     }
 
     private function inBackup(array $data):int {
@@ -45,11 +33,11 @@ class Insert extends DB
     }
 
     private function inColumn(int $id, string $column, mixed $value):void {
-        $json = [
+        $json = json_encode([
             'id' => $id,
             $column => $value
-        ];
-        Storage::append('public/' . $this->name . '/' . $this->name . '.json', $json);
+        ]);
+        Storage::append('public/' . $this->name . '/' . $column . '.json', $json);
     }
 
 
