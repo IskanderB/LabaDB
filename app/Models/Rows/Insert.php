@@ -5,6 +5,7 @@ namespace App\Models\Rows;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
 use App\Models\DB;
+use App\Models\Rows\Get;
 
 class Insert extends DB
 {
@@ -16,13 +17,15 @@ class Insert extends DB
     }
 
     private function inBackup(array $data):int {
-        $filepath = Storage::path('public/' . $this->name . '/' . $this->name . '.json');
-        $id = $this->getLastId($filepath) + 1;
+        $get = new Get($this->name);
+        $filepath_global = Storage::path($get->getFilePath($this->name));
+        $filepath_local = $get->getFilePath($this->name);
+        $id = $get->getLastId($filepath_global) + 1;
         $json = json_encode([
             'id' => $id,
             'data' => $data
         ]);
-        Storage::append('public/' . $this->name . '/' . $this->name . '.json', $json);
+        Storage::append($filepath_local, $json);
         return $id;
     }
 
@@ -33,11 +36,12 @@ class Insert extends DB
     }
 
     private function inColumn(int $id, string $column, mixed $value):void {
+        $get = new Get($this->name);
         $json = json_encode([
             'id' => $id,
             $column => $value
         ]);
-        Storage::append('public/' . $this->name . '/' . $column . '.json', $json);
+        Storage::append($get->getFilePath($column), $json);
     }
 
 

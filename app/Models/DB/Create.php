@@ -5,7 +5,7 @@ namespace App\Models\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\DB;
 use Illuminate\Support\Facades\Storage;
-
+use App\Models\Rows\Get;
 
 class Create extends DB
 {
@@ -21,12 +21,9 @@ class Create extends DB
     }
 
     private function makeFiles(array $columns):void {
+        $get = new Get($this->name);
         unset($columns['directory']);
-        foreach ($columns as $key => $value){
-            Storage::put('public/' . $this->name . '/' . $value . '.json', '');
-        }
-        Storage::put('public/' . $this->name . '/columns.json', json_encode($columns));
-        Storage::put('public/' . $this->name . '/' . $this->name . '.json', '');
+        Storage::put($get->getFilePath('columns'), json_encode($columns));
     }
 
 

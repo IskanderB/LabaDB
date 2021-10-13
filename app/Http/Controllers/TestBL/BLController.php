@@ -8,6 +8,7 @@ use App\Models\DB\Remove;
 use App\Models\DB\Clear;
 use App\Models\Rows\Insert;
 use App\Models\Rows\Select;
+use App\Models\Rows\Delete;
 use Illuminate\Http\Request;
 
 class BLController extends Controller
@@ -34,7 +35,7 @@ class BLController extends Controller
         $data = [
             'id(int)' => 4,
             'name(str)' => 'Coco',
-            'weight(float)' => 82.6,
+            'weight(float)' => 83.4,
             'checked(bool)' => 0,
         ];
         $directory = 'test_db';
@@ -45,6 +46,12 @@ class BLController extends Controller
     public function select(Request $request) {
         $DB = new Select($request->directory);
         $rows = $DB->select($request->column, $request->value);
+        dd($rows);
+    }
+
+    public function delete(Request $request) {
+        $DB = new Delete($request->directory);
+        $rows = $DB->remove($request->column, $request->value);
         dd($rows);
     }
 }
