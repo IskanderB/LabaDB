@@ -26,6 +26,7 @@ class Insert extends DB
             'data' => $data
         ]);
         Storage::append($filepath_local, $json);
+        Storage::put($get->getFilePath('config/lastId'), $id);
         return $id;
     }
 

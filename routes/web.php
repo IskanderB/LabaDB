@@ -28,4 +28,5 @@ Route::name('testbl.')->group(function () {
     Route::get('/testbl/insert', 'App\Http\Controllers\TestBL\BLController@insert')->name('insert');
     Route::get('/testbl/select', 'App\Http\Controllers\TestBL\BLController@select')->name('select');
     Route::get('/testbl/delete', 'App\Http\Controllers\TestBL\BLController@delete')->name('delete');
+    Route::get('/testbl/edit', 'App\Http\Controllers\TestBL\BLController@edit')->name('edit');
 });

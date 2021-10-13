@@ -9,6 +9,7 @@ use App\Models\DB\Clear;
 use App\Models\Rows\Insert;
 use App\Models\Rows\Select;
 use App\Models\Rows\Delete;
+use App\Models\Rows\Edit;
 use Illuminate\Http\Request;
 
 class BLController extends Controller
@@ -53,5 +54,15 @@ class BLController extends Controller
         $DB = new Delete($request->directory);
         $rows = $DB->remove($request->column, $request->value);
         dd($rows);
+    }
+
+    public function edit(Request $request) {
+        $DB = new Edit($request->directory);
+        $data = $request->all();
+        unset($data['id_DB_PRIMARY']);
+        $DB->edit(
+            $request->id_DB_PRIMARY,
+            $data
+        );
     }
 }

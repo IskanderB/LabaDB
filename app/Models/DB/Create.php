@@ -18,12 +18,14 @@ class Create extends DB
 
     private function makeDir():void {
         Storage::makeDirectory('public/' . $this->name);
+        Storage::makeDirectory('public/' . $this->name . '/config');
     }
 
     private function makeFiles(array $columns):void {
         $get = new Get($this->name);
         unset($columns['directory']);
-        Storage::put($get->getFilePath('columns'), json_encode($columns));
+        Storage::put($get->getFilePath('config/columns'), json_encode($columns));
+        Storage::put($get->getFilePath('config/lastId'), 0);
     }
 
 
