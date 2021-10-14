@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DB\Create;
 use App\Models\DB\Remove;
 use App\Models\DB\Clear;
+use App\Models\DB\Backup;
 use App\Models\Rows\Insert;
 use App\Models\Rows\Select;
 use App\Models\Rows\Delete;
@@ -60,9 +61,15 @@ class BLController extends Controller
         $DB = new Edit($request->directory);
         $data = $request->all();
         unset($data['id_DB_PRIMARY']);
+        unset($data['directory']);
         $DB->edit(
             $request->id_DB_PRIMARY,
             $data
         );
+    }
+
+    public function getBackup(Request $request) {
+        $DB = new Backup($request->directory);
+        $DB->getBackupFile();
     }
 }
