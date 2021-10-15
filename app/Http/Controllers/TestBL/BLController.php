@@ -34,13 +34,19 @@ class BLController extends Controller
     }
 
     public function insert(Request $request) {
+//        $data = [
+//            'id(int)' => 4,
+//            'name(str)' => 'Coco',
+//            'weight(float)' => 83.4,
+//            'checked(bool)' => 0,
+//        ];
         $data = [
-            'id(int)' => 4,
-            'name(str)' => 'Coco',
-            'weight(float)' => 83.4,
-            'checked(bool)' => 0,
+            'a' => 4,
+            'b' => 'Coco',
+            'c' => 83.4,
+            'd' => 0,
         ];
-        $directory = 'test_db';
+        $directory = 'test';
         $DB = new Insert($directory);
         $DB->insert($data);
     }
@@ -71,5 +77,20 @@ class BLController extends Controller
     public function getBackup(Request $request) {
         $DB = new Backup($request->directory);
         $DB->getBackupFile();
+    }
+
+    public function createbackup(Request $request) {
+        $DB = new Backup($request->directory);
+        $DB->createBackupFile();
+    }
+
+    public function restore(Request $request) {
+        $DB = new Backup($request->directory);
+        $DB->restore($request);
+    }
+
+    public function uplbackup(Request $request) {
+        $DB = new Backup($request->directory);
+        $DB->uploadBackupFile($request);
     }
 }

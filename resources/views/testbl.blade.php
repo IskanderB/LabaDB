@@ -54,6 +54,40 @@
                 </button>
             </form>
         </div>
+        <br><br>
+        <div>
+            <label>Upload backup file</label>
+            <form method="POST" action="{{ route('testbl.uplbackup') }} " enctype="multipart/form-data">
+                @csrf
+                <input id="directory" type="text"  name="directory">
+                <input id="file" type="file" name="file">
+                <button type="submit">
+                    Ok
+                </button>
+            </form>
+        </div>
+        <br><br>
+        <div>
+            <label>Create backup file</label>
+            <form method="POST" action="{{ route('testbl.createbackup') }} " enctype="multipart/form-data">
+                @csrf
+                <input id="directory" type="text"  name="directory" value="test">
+                <button type="submit">
+                    Ok
+                </button>
+            </form>
+        </div>
+        <br><br>
+        <div>
+            <label>Restore DB</label>
+            <form method="POST" action="{{ route('testbl.restore') }} " enctype="multipart/form-data">
+                @csrf
+                <input id="directory" type="text"  name="directory" value="test">
+                <button type="submit">
+                    Ok
+                </button>
+            </form>
+        </div>
     </div>
 
 </body>
