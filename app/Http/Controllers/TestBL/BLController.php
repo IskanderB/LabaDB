@@ -7,6 +7,7 @@ use App\Models\DB\Create;
 use App\Models\DB\Remove;
 use App\Models\DB\Clear;
 use App\Models\DB\Backup;
+use App\Models\DB\Import;
 use App\Models\Rows\Insert;
 use App\Models\Rows\Select;
 use App\Models\Rows\Delete;
@@ -92,5 +93,10 @@ class BLController extends Controller
     public function uplbackup(Request $request) {
         $DB = new Backup($request->directory);
         $DB->uploadBackupFile($request);
+    }
+
+    public function import(Request $request) {
+        $DB = new Import($request->directory);
+        $DB->import();
     }
 }

@@ -88,6 +88,17 @@
                 </button>
             </form>
         </div>
+        <br><br>
+        <div>
+            <label>Import DB</label>
+            <form method="POST" action="{{ route('testbl.import') }} " enctype="multipart/form-data">
+                @csrf
+                <input id="directory" type="text"  name="directory" value="test">
+                <button type="submit">
+                    Ok
+                </button>
+            </form>
+        </div>
     </div>
 
 </body>

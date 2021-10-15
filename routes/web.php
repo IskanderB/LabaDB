@@ -33,4 +33,5 @@ Route::name('testbl.')->group(function () {
     Route::post('/testbl/restore', 'App\Http\Controllers\TestBL\BLController@restore')->name('restore');
     Route::post('/testbl/uplbackup', 'App\Http\Controllers\TestBL\BLController@uplbackup')->name('uplbackup');
     Route::post('/testbl/createbackup', 'App\Http\Controllers\TestBL\BLController@createbackup')->name('createbackup');
+    Route::post('/testbl/import', 'App\Http\Controllers\TestBL\BLController@import')->name('import');
 });
