@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DB\CreateController;
+use App\Http\Controllers\DB\RemoveController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,9 +22,13 @@ use App\Http\Controllers\DB\CreateController;
 
 Route::prefix('/' . env('API_VERSION'))->group(function () {
     Route::prefix('/db')->group(function () {
-        Route::get(
+        Route::post(
             '/create',
             [CreateController::class, 'create']
         )->name('create');
+        Route::delete(
+            '/remove',
+            [RemoveController::class, 'remove']
+        )->name('remove');
     });
 });

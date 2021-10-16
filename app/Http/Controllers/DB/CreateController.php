@@ -11,10 +11,10 @@ use App\Models\DB\Create;
 class CreateController extends Controller
 {
     public function create(Request $request) {
+        $request->name = $request->name . '_db';
         $result = ValidateDBController::validateDBName($request, false);
         if ($result != 'сompleted')
             return ResponseController::sendError($result);
-        $request->name = $request->name . '_db';
 
         $params = [
             'column_1',
@@ -35,6 +35,9 @@ class CreateController extends Controller
         }
         $DB = new Create($request->name);
         $DB->create($columns);
-
+        return ResponseController::sendResponse(
+            ['DB_name' => $request->name],
+            "Data base $request->name created successfully!"
+        );
     }
 }

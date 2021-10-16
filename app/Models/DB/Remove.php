@@ -10,7 +10,7 @@ class Remove extends DB
 {
     use HasFactory;
 
-    public function rmDir():void {
+    public function remove():void {
         Storage::deleteDirectory('public/' . $this->name);
         $this->rmNameFromList();
     }
