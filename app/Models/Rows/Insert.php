@@ -12,11 +12,11 @@ class Insert extends DB
     use HasFactory;
 
     public function insert(array $data):void {
-        $id = $this->inBackup($data);
+        $id = $this->inBasic($data);
         $this->inColumns($id, $data);
     }
 
-    private function inBackup(array $data):int {
+    private function inBasic(array $data):int {
         $get = new Get($this->name);
         $filepath_global = Storage::path($get->getFilePath($this->name));
         $filepath_local = $get->getFilePath($this->name);

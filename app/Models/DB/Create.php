@@ -14,6 +14,7 @@ class Create extends DB
     public function create(array $columns):void {
         $this->makeDir();
         $this->makeFiles($columns);
+        $this->addNameInList();
     }
 
     private function makeDir():void {
@@ -23,10 +24,19 @@ class Create extends DB
 
     private function makeFiles(array $columns):void {
         $get = new Get($this->name);
-        unset($columns['directory']);
         Storage::put($get->getFilePath('config/columns'), json_encode($columns));
         Storage::put($get->getFilePath('config/lastId'), 0);
     }
 
-
+    private function addNameInList() {
+        $filepath = 'public/config/list.json';
+        if (!Storage::exists($filepath)) {
+            Storage::put($filepath, json_encode([$this->name]));
+        }
+        else {
+            $list = json_decode(Storage::get($filepath), true);
+            $list[] = $this->name;
+            Storage::put($filepath, json_encode($list));
+        }
+    }
 }

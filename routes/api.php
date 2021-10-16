@@ -19,10 +19,11 @@ use App\Http\Controllers\DB\CreateController;
 //    return $request->user();
 //});
 
-
-Route::prefix('/db')->group(function () {
-    Route::get(
-        '/create',
-        [CreateController::class, 'create']
-    )->name('create');
+Route::prefix('/' . env('API_VERSION'))->group(function () {
+    Route::prefix('/db')->group(function () {
+        Route::get(
+            '/create',
+            [CreateController::class, 'create']
+        )->name('create');
+    });
 });
