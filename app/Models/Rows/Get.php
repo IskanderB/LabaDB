@@ -48,12 +48,16 @@ class Get extends DB
     }
 
     public function getColumns():array {
-        $columns_file = json_decode(Storage::get($this->getFilePath('config/columns', true)));
+        $columns_file = json_decode(Storage::get($this->getFilePath('config/columns')), true);
         $columns = [];
         foreach ($columns_file as $item) {
             $columns[] = $item['name'];
         }
         return $columns;
+    }
+
+    public function getColumnsAndTypes():array {
+        return json_decode(Storage::get($this->getFilePath('config/columns')), true);
     }
 
     public function getLastId($filepath):int {

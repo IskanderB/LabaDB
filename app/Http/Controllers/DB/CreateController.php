@@ -31,8 +31,12 @@ class CreateController extends Controller
 
         $columns = [];
         foreach ($params as $param) {
-            $columns[$param] = $request->$param;
+            $columns[$param] = json_decode($request->$param, true);
         }
+        $result = ValidateDBController::checkDuplicatedColumns($columns);
+        if ($result != 'сompleted')
+            return ResponseController::sendError($result);
+
         $DB = new Create($request->name);
         $DB->create($columns);
         return ResponseController::sendResponse(

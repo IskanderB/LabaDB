@@ -9,7 +9,7 @@ class ValidateController extends Controller
 {
     public static function checkNotEmpty(Request $request, string $param) {
         if ($request->$param == null) {
-            return "Parameter $param is empty!";
+            return "Parameter $param is empty or not exists!";
         }
     }
 

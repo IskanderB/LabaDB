@@ -28,8 +28,17 @@ class ValidateDBController extends ValidateController
         return 'сompleted';
     }
 
-    public static function validateColumnsName($array) {
-        if ($e = self::checkNotEmptyInArray($array)) return $e;
+    public static function checkDuplicatedColumns($columns) {
+        $names = [];
+        foreach ($columns as $column) {
+            $names[] = $column['name'];
+        }
+        if(count(array_unique($names))<count($names))
+        {
+            return "Column names should be unique in your database!";
+        }
+        else
+            return 'сompleted';
     }
 
     public static function checkExistsDB(string $name, bool $exists){
