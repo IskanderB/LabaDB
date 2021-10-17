@@ -5,27 +5,42 @@ namespace App\Http\Controllers\Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Validator\ValidateController;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ValidateDBController extends ValidateController
 {
-    public static function validateDBName(Request $request, bool $exists):string {
-        if ($e = self::checkNotEmpty($request, 'name')) return $e;
-        if ($e = self::checkType($request->name, 'string')) return $e;
-        if ($e = self::checkSizeString($request->name, 255)) return $e;
+    public static function validateDBName(Request $request, bool $exists):mixed {
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+        ]);
+        if ($validator->fails()) {
+            return $validator->errors()->getMessages();
+        }
         if ($e = self::checkExistsDB($request->name, $exists)) return $e;
         return 'сompleted';
     }
 
-    public static function validateColumnsRequest(Request $request, string $param):string {
-        if ($e = self::checkNotEmpty($request, $param)) return $e;
-        $array = json_decode($request->$param, true);
-        if ($e = self::checkType($array, 'array')) return $e;
-        if ($e = self::checkRequiredItems($array, ['name', 'type'])) return $e;
-        if ($e = self::checkType($array['name'], 'string')) return $e;
-        if ($e = self::checkType($array['type'], 'string')) return $e;
-        if ($e = self::checkSizeString($array['name'], 255)) return $e;
-        if ($e = self::checkTypesRange($array['type'])) return $e;
+    public static function validateColumnsRequest(Request $request, array $params):mixed {
+        $validator = Validator::make($request->all(), $params);
+        if ($validator->fails()) {
+            return $validator->errors()->getMessages();
+        }
+//        if ($e = self::checkNotEmpty($request, $param)) return $e;
+//        $array = $request->$param;
+//        if ($e = self::checkType($array, 'array')) return $e;
+//        if ($e = self::checkRequiredItems($array, ['name', 'type'])) return $e;
+//        if ($e = self::checkType($array['name'], 'string')) return $e;
+//        if ($e = self::checkType($array['type'], 'string')) return $e;
+//        if ($e = self::checkSizeString($array['name'], 255)) return $e;
+//        if ($e = self::checkTypesRange($array['type'])) return $e;
         return 'сompleted';
+    }
+
+    public static function validateColumnsFuild(Request $request, string $param):mixed {
+        $validator = Validator::make($request->$param, [
+            'name' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', 'max:255'],
+        ]);
     }
 
     public static function checkDuplicatedColumns($columns) {
@@ -51,7 +66,7 @@ class ValidateDBController extends ValidateController
                 } else {
                     $error = "This database already exists!";
                 }
-                return $error;
+                return ['name' => $error];
             }
         }
     }
@@ -66,10 +81,10 @@ class ValidateDBController extends ValidateController
 
     public static function checkTypesRange(string $type) {
         $allowed_types = [
-            'int',
+            'integer',
             'string',
-            'float',
-            'bool'
+            'double',
+            'boolean'
         ];
         foreach ($allowed_types as $allowed_type) {
             if ($type == $allowed_type) return null;

@@ -16,5 +16,7 @@ class InsertController extends Controller
             return ResponseController::sendError($result);
 
         $result = ValidateRowController::validateColumns($request);
+        if ($result != 'сompleted')
+            return ResponseController::sendError($result);
     }
 }

@@ -15,23 +15,24 @@ class CreateController extends Controller
         $result = ValidateDBController::validateDBName($request, false);
         if ($result != 'сompleted')
             return ResponseController::sendError($result);
-
         $params = [
-            'column_1',
-            'column_2',
-            'column_3',
-            'column_4',
+            'column_1' => ['required', 'array', 'max:2', 'min:2'],
+            'column_2' => ['required', 'array', 'max:2', 'min:2'],
+            'column_3' => ['required', 'array', 'max:2', 'min:2'],
+            'column_4' => ['required', 'array', 'max:2', 'min:2'],
         ];
+        $result = ValidateDBController::validateColumnsRequest($request, $params);
+        if ($result != 'сompleted')
+            return ResponseController::sendError($result);
 
         foreach ($params as $param) {
             $result = ValidateDBController::validateColumnsRequest($request, $param);
             if ($result != 'сompleted')
                 return ResponseController::sendError($result);
         }
-
         $columns = [];
         foreach ($params as $param) {
-            $columns[$param] = json_decode($request->$param, true);
+            $columns[$param] = $request->$param;
         }
         $result = ValidateDBController::checkDuplicatedColumns($columns);
         if ($result != 'сompleted')
