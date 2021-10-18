@@ -7,34 +7,28 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Validator\ValidateDBController;
 use App\Http\Controllers\Validator\ValidateRowController;
 use App\Http\Controllers\ResponseController;
-use App\Models\Rows\Insert;
+use App\Models\Rows\Edit;
 use App\Models\Rows\Get;
 
-class InsertController extends Controller
+class EditController extends Controller
 {
-    public function insert(Request $request) {
+    public function edit(Request $request) {
         $result = ValidateDBController::validateDBName($request, true);
         if ($result != 'сompleted')
             return ResponseController::sendError($result);
 
-        $result = ValidateRowController::validateColumns($request);
-        if ($result != 'сompleted')
+        $id = ValidateRowController::validateEdit($request);
+        if (gettype($id) != 'integer')
             return ResponseController::sendError($result);
 
-        $DB = new Insert($request->name);
-        $get = new Get($request->name);
-        $columns = $get->getColumns();
-        $data = [];
-        foreach ($columns as $column) {
-            $data[$column] = $request->data[$column] ?? null;
-        }
-        $DB->insert($data);
+        $DB = new Edit($request->name);
+        $DB->edit($id, $request->data);
         return ResponseController::sendResponse(
             [
                 'DB_name' => $request->name,
-                'Added_row' => json_encode($data)
+                'Added_row' => json_encode($request->data)
             ],
-            "New row successfully added in data base $request->name!"
+            "The row edited successfully!"
         );
     }
 }

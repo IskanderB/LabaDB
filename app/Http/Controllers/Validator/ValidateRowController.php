@@ -12,9 +12,21 @@ class ValidateRowController extends ValidateController
 {
     public static function validateColumns(Request $request) {
         $get = new Get($request->name);
+        if ($e = self::checkDataExists($request)) return $e;
         if ($e = self::checkMatchColumns($request, $get)) return $e;
-        if ($e = self::checkUniqueColumns($request, $get)) return $e;
+        $unique = self::checkUniqueRow($request, $get);
+        if (!$unique['unique'])
+            return $unique['errors'];
         return 'сompleted';
+    }
+
+    public static function checkDataExists(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'data' => ['required', 'array', 'min:1']
+        ]);
+        if ($validator->fails()) {
+            return $validator->errors()->getMessages();
+        }
     }
 
     public static function checkMatchColumns(Request $request, Get $get) {
@@ -29,21 +41,35 @@ class ValidateRowController extends ValidateController
                 $rules[$item['name']][] = 'max:255';
             }
         }
-        $validator = Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->data, $rules);
         if ($validator->fails()) {
             return $validator->errors()->getMessages();
         }
     }
 
-    public static function checkUniqueColumns(Request $request, Get $get) {
-        $columns_uniq = $get->getUniqueColumns();
+    public static function checkUniqueRow(Request $request, Get $get):array {
+        $column_uniq = $get->getUniqueColumns();
         $DB = new Select($request->name);
-        foreach ($columns_uniq as $column) {
-            $value = $request->$column;
-            if ($DB->select($column, $value))
-                return [$column => "Row with $value in $column already exists!"];
-
+        $row = $DB->select($column_uniq[0], $request->data[$column_uniq[0]]);
+        $unique = [
+            'allUnique' => false,
+            'unique' => true,
+            'errors' => [],
+        ];
+        foreach ($column_uniq as $column) {
+            $value = $request->data[$column];
+            $row = $DB->select($column, $value);
+            if ($row) {
+                $unique['errors'][$column] = "Column $column should be unique!";
+                $unique['unique'] = false;
+                foreach ($column_uniq as $column_in) {
+                    $value_in = $request->data[$column_in];
+                    if($row[0]['data'][$column_in] == $value_in)
+                        $unique['allUnique'] = $row[0]['id'];
+                }
+            }
         }
+        return $unique;
     }
 
     public static function validateSearch(Request $request) {
@@ -71,5 +97,16 @@ class ValidateRowController extends ValidateController
         $column_name = $request->search_data['name'];
         $DB_name = $request->name;
         return ["name" => "Column $column_name is not exists in $DB_name data base!"];
+    }
+
+    public static function validateEdit(Request $request) {
+        $get = new Get($request->name);
+        if ($e = self::checkDataExists($request)) return $e;
+        if ($e = self::checkMatchColumns($request, $get)) return $e;
+        $unique = self::checkUniqueRow($request, $get);
+        if (!$unique['allUnique'])
+            return "No such row exists!";
+        else
+            return $unique['allUnique'];
     }
 }

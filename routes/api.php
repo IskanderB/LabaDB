@@ -6,6 +6,7 @@ use App\Http\Controllers\DB\CreateController;
 use App\Http\Controllers\DB\RemoveController;
 use App\Http\Controllers\Rows\InsertController;
 use App\Http\Controllers\Rows\SelectController;
+use App\Http\Controllers\Rows\EditController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,10 @@ Route::prefix('/' . env('API_VERSION'))->group(function () {
                 '/select',
                 [SelectController::class, 'select']
             )->name('select');
+            Route::put(
+                '/edit',
+                [EditController::class, 'edit']
+            )->name('edit');
         });
     });
 });
