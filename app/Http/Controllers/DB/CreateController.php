@@ -16,25 +16,28 @@ class CreateController extends Controller
         if ($result != 'сompleted')
             return ResponseController::sendError($result);
         $params = [
-            'column_1' => ['required', 'array', 'max:2', 'min:2'],
-            'column_2' => ['required', 'array', 'max:2', 'min:2'],
-            'column_3' => ['required', 'array', 'max:2', 'min:2'],
-            'column_4' => ['required', 'array', 'max:2', 'min:2'],
+            'column_1' => ['required', 'array', 'max:3', 'min:2'],
+            'column_2' => ['required', 'array', 'max:3', 'min:2'],
+            'column_3' => ['required', 'array', 'max:3', 'min:2'],
+            'column_4' => ['required', 'array', 'max:3', 'min:2'],
         ];
         $result = ValidateDBController::validateColumnsRequest($request, $params);
         if ($result != 'сompleted')
             return ResponseController::sendError($result);
 
-        foreach ($params as $param) {
-            $result = ValidateDBController::validateColumnsRequest($request, $param);
+        foreach ($params as $param => $fuild) {
+            $result = ValidateDBController::validateColumnsFuild($request->$param);
             if ($result != 'сompleted')
                 return ResponseController::sendError($result);
         }
         $columns = [];
-        foreach ($params as $param) {
+        foreach ($params as $param => $fuild) {
             $columns[$param] = $request->$param;
         }
         $result = ValidateDBController::checkDuplicatedColumns($columns);
+        if ($result != 'сompleted')
+            return ResponseController::sendError($result);
+        $result = ValidateDBController::checkUniqueColumns($request, $params);
         if ($result != 'сompleted')
             return ResponseController::sendError($result);
 

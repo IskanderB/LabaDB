@@ -20,27 +20,32 @@ class ValidateDBController extends ValidateController
         return 'сompleted';
     }
 
+    public static function checkUniqueColumns(Request $request, array $params) {
+        foreach ($params as $param => $fuild) {
+            if ($request->$param['unique']) return 'сompleted';
+        }
+        return ['unique' => 'At least one column must be unique!'];
+    }
+
     public static function validateColumnsRequest(Request $request, array $params):mixed {
         $validator = Validator::make($request->all(), $params);
         if ($validator->fails()) {
             return $validator->errors()->getMessages();
         }
-//        if ($e = self::checkNotEmpty($request, $param)) return $e;
-//        $array = $request->$param;
-//        if ($e = self::checkType($array, 'array')) return $e;
-//        if ($e = self::checkRequiredItems($array, ['name', 'type'])) return $e;
-//        if ($e = self::checkType($array['name'], 'string')) return $e;
-//        if ($e = self::checkType($array['type'], 'string')) return $e;
-//        if ($e = self::checkSizeString($array['name'], 255)) return $e;
-//        if ($e = self::checkTypesRange($array['type'])) return $e;
         return 'сompleted';
     }
 
-    public static function validateColumnsFuild(Request $request, string $param):mixed {
-        $validator = Validator::make($request->$param, [
+    public static function validateColumnsFuild(array $fuild):mixed {
+        $validator = Validator::make($fuild, [
             'name' => ['required', 'string', 'max:255'],
             'type' => ['required', 'string', 'max:255'],
+            'unique' => ['required', 'boolean'],
         ]);
+        if ($validator->fails()) {
+            return $validator->errors()->getMessages();
+        }
+        if ($e = self::checkTypesRange($fuild['type'])) return ['type' => $e];
+        return 'сompleted';
     }
 
     public static function checkDuplicatedColumns($columns) {
@@ -83,7 +88,7 @@ class ValidateDBController extends ValidateController
         $allowed_types = [
             'integer',
             'string',
-            'double',
+            'numeric',
             'boolean'
         ];
         foreach ($allowed_types as $allowed_type) {

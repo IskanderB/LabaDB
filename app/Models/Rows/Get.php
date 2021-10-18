@@ -66,11 +66,6 @@ class Get extends DB
     }
 
     public function getLastId($filepath):int {
-//        $lastRow = json_decode($this->tailCustom($filepath), true);
-//        if ($lastRow)
-//            return intval($lastRow['id']);
-//        else
-//            return 0;
         return intval(Storage::get($this->getFilePath('config/lastId')));
     }
 
@@ -133,5 +128,15 @@ class Get extends DB
 
     public function getFilePath(string $fileName):string {
         return 'public/' . $this->name . '/' . $fileName . '.json';
+    }
+
+    public function getUniqueColumns():array {
+        $columnsFromJson = json_decode(Storage::get($this->getFilePath('config/columns')), true);
+        $uniques = [];
+        foreach ($columnsFromJson as $key => $item) {
+            if ($item['unique'])
+                $uniques[] = $item['name'];
+        }
+        return $uniques;
     }
 }
