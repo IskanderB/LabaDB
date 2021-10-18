@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DB\CreateController;
 use App\Http\Controllers\DB\RemoveController;
 use App\Http\Controllers\Rows\InsertController;
+use App\Http\Controllers\Rows\SelectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +40,10 @@ Route::prefix('/' . env('API_VERSION'))->group(function () {
                 '/insert',
                 [InsertController::class, 'insert']
             )->name('insert');
+            Route::post(
+                '/select',
+                [SelectController::class, 'select']
+            )->name('select');
         });
     });
 });

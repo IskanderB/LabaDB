@@ -139,4 +139,8 @@ class Get extends DB
         }
         return $uniques;
     }
+
+    public function getAllFromColumns():array {
+        return json_decode(Storage::get($this->getFilePath('config/columns')), true);
+    }
 }

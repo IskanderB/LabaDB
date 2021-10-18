@@ -18,13 +18,16 @@ class ValidateRowController extends ValidateController
     }
 
     public static function checkMatchColumns(Request $request, Get $get) {
-        $columnsAndTypes = $get->getColumnsAndTypes();
+        $allFromColumns = $get->getAllFromColumns();
         $rules = [];
-        foreach ($columnsAndTypes as $column => $type) {
-            if($type == 'string')
-                $rules[$column] =['required', $type, 'max:255'];
-            else
-                $rules[$column] =['required', $type];
+        foreach ($allFromColumns as $key => $item) {
+            $rules[$item['name']] = [$item['type']];
+            if ($item['unique']) {
+                $rules[$item['name']][] = 'required';
+            }
+            if ($item['type'] == 'string') {
+                $rules[$item['name']][] = 'max:255';
+            }
         }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
@@ -41,5 +44,32 @@ class ValidateRowController extends ValidateController
                 return [$column => "Row with $value in $column already exists!"];
 
         }
+    }
+
+    public static function validateSearch(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'search_data' => ['required', 'array', 'min:1'],
+        ]);
+        if ($validator->fails()) {
+            return $validator->errors()->getMessages();
+        }
+
+        $validator = Validator::make($request->search_data, [
+            'name' => ['required', 'string', 'max:255'],
+            'value' => ['max:255'],
+        ]);
+        if ($validator->fails()) {
+            return $validator->errors()->getMessages();
+        }
+
+        $get = new Get($request->name);
+        $columns = $get->getColumns();
+        foreach ($columns as $column) {
+            if ($request->search_data['name'] == $column)
+                return 'сompleted';
+        }
+        $column_name = $request->search_data['name'];
+        $DB_name = $request->name;
+        return ["name" => "Column $column_name is not exists in $DB_name data base!"];
     }
 }
