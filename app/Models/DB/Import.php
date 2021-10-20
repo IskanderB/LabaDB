@@ -87,7 +87,7 @@ class Import extends DB
     }
 
     public function getImportFilePath() {
-        return 'storage/' . $this->name . 'import/' . $this->name . '.html';
+        return '/storage/' . $this->name . '/import/' . $this->name . '.html';
     }
 
 //    public static function afterSheet(AfterSheet $event){

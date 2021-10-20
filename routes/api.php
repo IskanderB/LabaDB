@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DB\BackupController;
+use App\Http\Controllers\DB\ImportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DB\CreateController;
@@ -55,6 +56,11 @@ Route::prefix('/' . env('API_VERSION'))->group(function () {
             '/restore',
             [BackupController::class, 'restore']
         )->name('restore');
+
+        Route::get(
+            '/import',
+            [ImportController::class, 'import']
+        )->name('import');
 
         // Routes to rows of database
 
