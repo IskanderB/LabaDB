@@ -8,6 +8,7 @@ use App\Http\Controllers\Rows\InsertController;
 use App\Http\Controllers\Rows\SelectController;
 use App\Http\Controllers\Rows\EditController;
 use App\Http\Controllers\Rows\DeleteController;
+use App\Http\Controllers\DB\ClearController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,11 @@ Route::prefix('/' . env('API_VERSION'))->group(function () {
             '/remove',
             [RemoveController::class, 'remove']
         )->name('remove');
+
+        Route::delete(
+            '/clear',
+            [ClearController::class, 'clear']
+        )->name('clear');
 
         Route::prefix('/rows')->group(function () {
             Route::post(

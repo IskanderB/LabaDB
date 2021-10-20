@@ -11,7 +11,7 @@ class Clear extends DB
 {
     use HasFactory;
 
-    public function clearDir() {
+    public function clear() {
         $get = new Get($this->name);
         $columns = $get->getColumns();
         $links = [];
