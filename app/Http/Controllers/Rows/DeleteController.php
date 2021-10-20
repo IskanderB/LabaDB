@@ -7,12 +7,11 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Validator\ValidateDBController;
 use App\Http\Controllers\Validator\ValidateRowController;
 use App\Http\Controllers\ResponseController;
-use Illuminate\Support\Facades\Validator;
-use App\Models\Rows\Select;
+use App\Models\Rows\Delete;
 
-class SelectController extends Controller
+class DeleteController extends Controller
 {
-    public function select(Request $request) {
+    public function delete(Request $request) {
         $result = ValidateDBController::validateDBName($request, true);
         if ($result != 'сompleted')
             return ResponseController::sendError($result);
@@ -21,20 +20,16 @@ class SelectController extends Controller
         if ($result != 'сompleted')
             return ResponseController::sendError($result);
 
-        $DB = new Select($request->name);
-        $result = $DB->select(
-            $request->data['name'],
-            $request->data['value'] ?? null
-        );
-        if ($result)
+        $DB = new Delete($request->name);
+        $countDeletedRows = $DB->remove($request->data['name'], $request->data['value'] ?? null);
+        if ($countDeletedRows)
             return ResponseController::sendResponse(
-                $result,
-                "Request returned the following rows"
+                ['countDeletedRows' => $countDeletedRows],
+                "$countDeletedRows rows were deleted from $request->name database!"
             );
         else
             return ResponseController::sendError(
-                "No results found"
+                "No rows were deleted from $request->name database!"
             );
-
     }
 }

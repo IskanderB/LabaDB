@@ -11,7 +11,7 @@ class Delete extends DB
 {
     use HasFactory;
 
-    public function remove(string $column, mixed $value):void {
+    public function remove(string $column, mixed $value):int {
         $get = new Get($this->name);
         $IDs = $get->getIDs($column, $value);
         $deletedRows = $this->removeRows($IDs, $this->name);
@@ -19,6 +19,7 @@ class Delete extends DB
         foreach ($columns as $item) {
             $this->removeRows($IDs, $item);
         }
+        return count($IDs);
     }
 
     private function removeRows(array $IDs, string $fileName) {

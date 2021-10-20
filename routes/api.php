@@ -7,6 +7,7 @@ use App\Http\Controllers\DB\RemoveController;
 use App\Http\Controllers\Rows\InsertController;
 use App\Http\Controllers\Rows\SelectController;
 use App\Http\Controllers\Rows\EditController;
+use App\Http\Controllers\Rows\DeleteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +50,10 @@ Route::prefix('/' . env('API_VERSION'))->group(function () {
                 '/edit',
                 [EditController::class, 'edit']
             )->name('edit');
+            Route::delete(
+                '/delete',
+                [DeleteController::class, 'delete']
+            )->name('delete');
         });
     });
 });

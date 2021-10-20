@@ -74,13 +74,13 @@ class ValidateRowController extends ValidateController
 
     public static function validateSearch(Request $request) {
         $validator = Validator::make($request->all(), [
-            'search_data' => ['required', 'array', 'min:1'],
+            'data' => ['required', 'array', 'min:1'],
         ]);
         if ($validator->fails()) {
             return $validator->errors()->getMessages();
         }
 
-        $validator = Validator::make($request->search_data, [
+        $validator = Validator::make($request->data, [
             'name' => ['required', 'string', 'max:255'],
             'value' => ['max:255'],
         ]);
@@ -91,10 +91,10 @@ class ValidateRowController extends ValidateController
         $get = new Get($request->name);
         $columns = $get->getColumns();
         foreach ($columns as $column) {
-            if ($request->search_data['name'] == $column)
+            if ($request->data['name'] == $column)
                 return 'сompleted';
         }
-        $column_name = $request->search_data['name'];
+        $column_name = $request->data['name'];
         $DB_name = $request->name;
         return ["name" => "Column $column_name is not exists in $DB_name data base!"];
     }
