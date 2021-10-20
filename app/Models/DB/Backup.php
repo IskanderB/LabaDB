@@ -30,7 +30,7 @@ class Backup extends DB
         Storage::move('public/' . $path, $get->getFilePath('backup/' . $this->name));
     }
 
-    public function restore(Request $request):void {
+    public function restore():void {
         $get = new Get($this->name);
         $this->restoreBasicFile($get);
         $this->createColumns($get);
@@ -39,7 +39,7 @@ class Backup extends DB
     private function restoreBasicFile(Get $get):void {
         if (Storage::exists($get->getFilePath('backup/' . $this->name)))
             $DB = new Clear($this->name);
-            $DB->clearDir();
+            $DB->clear();
             Storage::copy($get->getFilePath('backup/' . $this->name), $get->getFilePath($this->name));
     }
 

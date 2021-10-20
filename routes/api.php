@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DB\BackupController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DB\CreateController;
@@ -28,6 +29,8 @@ use App\Http\Controllers\DB\ClearController;
 Route::prefix('/' . env('API_VERSION'))->group(function () {
     Route::prefix('/db')->group(function () {
 
+        //Routes to database totally
+
         Route::post(
             '/create',
             [CreateController::class, 'create']
@@ -42,6 +45,18 @@ Route::prefix('/' . env('API_VERSION'))->group(function () {
             '/clear',
             [ClearController::class, 'clear']
         )->name('clear');
+
+        Route::put(
+            '/backup',
+            [BackupController::class, 'createBackupFile']
+        )->name('backup');
+
+        Route::put(
+            '/restore',
+            [BackupController::class, 'restore']
+        )->name('restore');
+
+        // Routes to rows of database
 
         Route::prefix('/rows')->group(function () {
             Route::post(

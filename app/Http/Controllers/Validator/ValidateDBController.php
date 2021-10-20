@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Validator;
 
+use App\Models\Rows\Get;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Validator\ValidateController;
 use Illuminate\Support\Facades\Storage;
@@ -95,5 +96,21 @@ class ValidateDBController extends ValidateController
             if ($type == $allowed_type) return null;
         }
         return "Type $type is out of allowed range!";
+    }
+
+    public static function checkEmptyDB(string $name):mixed {
+        $get = new Get($name);
+        $check = Storage::exists($get->getFilePath($name));
+        if (!$check)
+            return "Database $name is empty!";
+        return 'сompleted';
+    }
+
+    public static function checkExistsBackup(string $name) {
+        $get = new Get($name);
+        $check = Storage::exists($get->getFilePath('/backup/' . $name));
+        if (!$check)
+            return "Backup file of database $name not exists!";
+        return 'сompleted';
     }
 }

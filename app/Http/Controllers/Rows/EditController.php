@@ -17,6 +17,10 @@ class EditController extends Controller
         if ($result != 'сompleted')
             return ResponseController::sendError($result);
 
+        $result = ValidateDBController::checkEmptyDB($request->name);
+        if ($result != 'сompleted')
+            return ResponseController::sendError($result);
+
         $id = ValidateRowController::validateEdit($request);
         if (gettype($id) != 'integer')
             return ResponseController::sendError($result);

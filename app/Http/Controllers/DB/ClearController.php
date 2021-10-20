@@ -5,7 +5,6 @@ namespace App\Http\Controllers\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Validator\ValidateDBController;
-use App\Http\Controllers\Validator\ValidateRowController;
 use App\Http\Controllers\ResponseController;
 use App\Models\DB\Clear;
 

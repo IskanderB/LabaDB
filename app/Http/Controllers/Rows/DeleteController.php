@@ -16,6 +16,10 @@ class DeleteController extends Controller
         if ($result != 'сompleted')
             return ResponseController::sendError($result);
 
+        $result = ValidateDBController::checkEmptyDB($request->name);
+        if ($result != 'сompleted')
+            return ResponseController::sendError($result);
+
         $result = ValidateRowController::validateSearch($request);
         if ($result != 'сompleted')
             return ResponseController::sendError($result);
