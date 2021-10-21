@@ -23,7 +23,7 @@ class EditController extends Controller
 
         $id = ValidateRowController::validateEdit($request);
         if (gettype($id) != 'integer')
-            return ResponseController::sendError($result);
+            return ResponseController::sendError($id);
 
         $DB = new Edit($request->name);
         $DB->edit($id, $request->data);

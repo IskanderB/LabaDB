@@ -17,7 +17,11 @@ class ValidateDBController extends ValidateController
         if ($validator->fails()) {
             return $validator->errors()->getMessages();
         }
-        if ($e = self::checkExistsDB($request->name, $exists)) return $e;
+        if ($e = self::checkExistsDB($request->name, $exists)) {
+            if($request->route()->getName() == "create" and $e == ['name' => "This database not exists!"])
+                return 'сompleted';
+            return $e;
+        }
         return 'сompleted';
     }
 
@@ -75,6 +79,8 @@ class ValidateDBController extends ValidateController
                 return ['name' => $error];
             }
         }
+        else
+            return ['name' => "This database not exists!"];
     }
 
     public static function checkRequiredItems(array $array, array $required) {
