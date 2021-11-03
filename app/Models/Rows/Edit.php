@@ -20,6 +20,7 @@ class Edit extends DB
 
     private function editRow(int $id, string $fileName, mixed $value):void {
         $get = new Get($this->name);
+        $columns = $get->getColumns();
         if ($fileName == 'data')
             $filepath_local = $get->getFilePath($this->name);
         else
@@ -31,7 +32,13 @@ class Edit extends DB
             while (($json = fgets($handle, 4096)) !== false) {
                 $buffer = json_decode($json, true);
                 if ($buffer and $buffer['id'] == $id){
-                    $buffer[$fileName] = $value;
+                    if ($fileName == 'data'){
+                        foreach ($columns as $column) {
+                            $buffer[$fileName][$column] = $value[$column] ?? null;
+                        }
+                    }
+                    else
+                        $buffer[$fileName] = $value;
                 }
                 Storage::append($filepath_new_local, json_encode($buffer));
             }
