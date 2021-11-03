@@ -11,6 +11,8 @@ use App\Http\Controllers\Rows\SelectController;
 use App\Http\Controllers\Rows\EditController;
 use App\Http\Controllers\Rows\DeleteController;
 use App\Http\Controllers\DB\ClearController;
+use App\Http\Controllers\DB\DBListController;
+use App\Http\Controllers\DB\ColumnsListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +63,16 @@ Route::prefix('/' . env('API_VERSION'))->group(function () {
             '/import',
             [ImportController::class, 'import']
         )->name('import');
+
+        Route::get(
+            '/list',
+            [DBListController::class, 'list']
+        )->name('list');
+
+        Route::get(
+            '/columns/list',
+            [ColumnsListController::class, 'list']
+        )->name('columnsList');
 
         // Routes to rows of database
 

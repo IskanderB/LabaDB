@@ -143,4 +143,12 @@ class Get extends DB
     public function getAllFromColumns():array {
         return json_decode(Storage::get($this->getFilePath('config/columns')), true);
     }
+
+    public static function getDBs():string {
+        $filepath = 'public/config/list.json';
+        if (Storage::exists($filepath))
+            return Storage::get($filepath);
+        else
+            return '';
+    }
 }
