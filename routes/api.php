@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DB\BackupController;
 use App\Http\Controllers\DB\ImportController;
+use App\Http\Controllers\DB\UniqueColumnsListController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DB\CreateController;
@@ -73,6 +74,11 @@ Route::prefix('/' . env('API_VERSION'))->group(function () {
             '/columns/list',
             [ColumnsListController::class, 'list']
         )->name('columnsList');
+
+        Route::get(
+            '/columns/unique/list',
+            [UniqueColumnsListController::class, 'list']
+        )->name('columnsUniqueList');
 
         // Routes to rows of database
 

@@ -25,7 +25,7 @@ class ResponseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public static function sendError($error, $code = 404, $errorMessages = [])
+    public static function sendError($error, $code = 200, $errorMessages = [])
     {
         $response = [
             'success' => false,
