@@ -13,7 +13,7 @@ class Delete extends DB
 
     public function remove(string $column, mixed $value):int {
         $get = new Get($this->name);
-        $IDs = $get->getIDs($column, $value);
+        $IDs = $get->getRows($column, $value, 'IDs');
         $deletedRows = $this->removeRows($IDs, $this->name);
         $columns = $get->getColumns();
         foreach ($columns as $item) {

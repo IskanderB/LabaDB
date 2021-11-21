@@ -12,39 +12,163 @@ class Get extends DB
 
     public function getRows(array $IDs):array {
         $ROWs = [];
+        $filepath = Storage::path($this->getFilePath($this->name));
+        if (!file_exists($filepath)){
+            return [];
+        }
+        $file = new \SplFileObject($filepath);
         foreach ($IDs as $id) {
-            $ROWs[] = $this->getRow($id);
+            $ROWs[] = $this->getRow($id, $file);
         }
         return $ROWs;
     }
 
-    public function getRow(int $id):array {
-        $filepath = Storage::path($this->getFilePath($this->name));
-        $handle = @fopen($filepath, "r");
-        if ($handle) {
-            while (($json = fgets($handle, 4096)) !== false) {
-                $buffer = json_decode($json, true);
-                if ($buffer and $buffer['id'] == $id)
-                    break;
+    public function getRow($value, $file):array {
+        $column = 'id';
+        $begin = 0;
+        $end = $file->fstat()['size'];
+        if (!$file->eof() and $end) {
+            while (true) {
+                $median = floor(($begin + $end)/2);
+                $file->fseek($median);
+                $json = $file->current();
+                $str = json_decode($json, true);
+                if ($str == null) {
+                    $file->next();
+                    $json = $file->current();
+                    $str = json_decode($json, true);
+                }
+                $row = $str[$column] ?? null;
+                if (strnatcmp($row, $value) == 0) {
+                    $result = $str ;
+                    return $result;
+                }
+                elseif (strnatcmp($row, $value) == 1) {
+                    if ($begin == $end or $median == $begin) {
+                        return [];
+                    }
+                    $end = $median - 1;
+                    continue;
+                }
+                else {
+                    $file->rewind();
+                    $json = $file->current();
+                    $str = json_decode($json, true);
+                    $row = $str[$column] ?? null;
+                    if (strnatcmp($row, $value) == 0) {
+                        $result = $str;
+                        return $result;
+                    }
+                    if ($begin == $end or $median == $end) {
+                        return [];
+                    }
+                    $begin = $median + 1;
+                    continue;
+                }
             }
-            fclose($handle);
         }
-        return $buffer;
+        else {
+            return [];
+        }
     }
 
     public function getIDs(string $column, mixed $value):array {
-        $filepath = Storage::path($this->getFilePath($column));
-        $handle = @fopen($filepath, "r");
-        $IDs = [];
-        if ($handle) {
-            while (($json = fgets($handle, 4096)) !== false) {
-                $buffer = json_decode($json, true);
-                if ($buffer and $buffer[$column] == $value)
-                    $IDs[] = $buffer['id'];
-            }
-            fclose($handle);
+        if (!file_exists(Storage::path($this->getFilePath($column)))){
+            return [];
         }
-        return $IDs;
+        $begin = 0;
+        $file = new \SplFileObject(Storage::path($this->getFilePath($column)));
+        $end = $file->fstat()['size'];
+        if (!$file->eof() and $end) {
+            while (true) {
+                $median = floor(($begin + $end)/2);
+                $file->fseek($median);
+                $json = $file->current();
+                $str = json_decode($json, true);
+                if ($str == null) {
+                    $file->next();
+                    $json = $file->current();
+                    $str = json_decode($json, true);
+                }
+                $row = $str['data'][$column] ?? null;
+                if (strnatcmp($row, $value) == 0) {
+                    $result = self::readRows($file->ftell(), 2, $value, $column, $file);
+                    return $result;
+                }
+                elseif (strnatcmp($row, $value) == 1) {
+                    if ($begin == $end or $median == $begin) {
+                        return [];
+                    }
+                    $end = $median - 1;
+                    continue;
+                }
+                else {
+                    $file->rewind();
+                    $json = $file->current();
+                    $str = json_decode($json, true);
+                    $row = $str['data'][$column] ?? null;
+                    if (strnatcmp($row, $value) == 0) {
+                        $result = self::readRows($file->ftell(), 2, $value, $column, $file);
+                        return $result;
+                    }
+                    if ($begin == $end or $median == $end) {
+                        return [];
+                    }
+                    $begin = $median + 1;
+                    continue;
+                }
+            }
+        }
+        else {
+            return [];
+        }
+    }
+
+    public static function readRows ($position, $number, $item, $column, $file) {
+        $newPosition = $position - 4096*$number;
+        if ($newPosition < 0)
+            $newPosition = 0;
+        $file->fseek($newPosition);
+        $json = $file->current();
+        $str = json_decode($json, true);
+        if ($str == null) {
+            $file->next();
+            $json = $file->current();
+            $str = json_decode($json, true);
+        }
+        $row = $str['data'][$column];
+        if (strnatcmp($row, $item) == 0 and $newPosition) {
+            self::readRows($newPosition, $number, $item, $column, $file);
+        }
+        $i = 0;
+        while (true) {
+            if ($newPosition  or $i)
+                $file->next();
+            $i++;
+            $json = $file->current();
+            $str = json_decode($json, true);
+            $row = $str['data'][$column] ?? null;
+            if ($row != null and strnatcmp($row, $item) == 0) {
+                break;
+            }
+        }
+        $i = 0;
+        while (true) {
+            if ($newPosition or $i){
+                $file->next();
+            }
+            $i++;
+            $json = $file->current();
+            $str = json_decode($json, true);
+            $row = $str['data'][$column] ?? null;
+            if ($row != null and strnatcmp($row, $item) == 0) {
+                $result[] = $str['id'];
+            }
+            else {
+                break;
+            }
+        }
+        return $result;
     }
 
     public function getColumns():array {
