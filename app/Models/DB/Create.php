@@ -25,7 +25,7 @@ class Create extends DB
     private function makeFiles(array $columns):void {
         $get = new Get($this->name);
         Storage::put($get->getFilePath('config/columns'), json_encode($columns));
-        Storage::put($get->getFilePath('config/lastId'), 0);
+        Storage::put($get->getFilePath('config/lastId'), json_encode(['id' => 0, 'count' => 0]));
     }
 
     private function addNameInList() {

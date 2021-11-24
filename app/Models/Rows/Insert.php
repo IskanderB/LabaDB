@@ -25,8 +25,20 @@ class Insert extends DB
             'id' => $id,
             'data' => $data
         ]);
-        Storage::append($filepath_local, $json);
-        Storage::put($get->getFilePath('config/lastId'), $id);
+        if (Storage::exists($get->getFilePath('config/lastId'))){
+            Storage::append($filepath_local, $json);
+            $last_j = Storage::get($get->getFilePath('config/lastId'));
+            $last = json_decode($last_j, true);
+            $last['id'] = $id;
+            $last['count']++;
+        }
+        else {
+            $last = [
+                'id' => $id,
+                'count' => 1
+            ];
+        }
+        Storage::put($get->getFilePath('config/lastId'), json_encode($last));
         return $id;
     }
 

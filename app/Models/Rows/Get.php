@@ -11,6 +11,20 @@ class Get extends DB
     use HasFactory;
 
     public function getRows(array $IDs):array {
+        if ($this->getCount() > 100) {
+            return $this->getRowsBinary($IDs);
+        }
+        return $this->getRowsLinear($IDs);
+    }
+
+    public function getIDs(string $column, mixed $value):array {
+        if ($this->getCount() > 100) {
+            return $this->getIDsBinary($column, $value);
+        }
+        return $this->getIDsLinear($column, $value);
+    }
+
+    public function getRowsBinary(array $IDs):array {
         $ROWs = [];
         $filepath = Storage::path($this->getFilePath($this->name));
         if (!file_exists($filepath)){
@@ -18,12 +32,13 @@ class Get extends DB
         }
         $file = new \SplFileObject($filepath);
         foreach ($IDs as $id) {
-            $ROWs[] = $this->getRow($id, $file);
+            $ROWs[] = $this->getRowBinary($id, $file);
         }
         return $ROWs;
     }
 
-    public function getRow($value, $file):array {
+
+    public function getRowBinary($value, $file):array {
         $column = 'id';
         $begin = 0;
         $end = $file->fstat()['size'];
@@ -72,7 +87,7 @@ class Get extends DB
         }
     }
 
-    public function getIDs(string $column, mixed $value):array {
+    public function getIDsBinary(string $column, mixed $value):array {
         if (!file_exists(Storage::path($this->getFilePath($column)))){
             return [];
         }
@@ -189,8 +204,16 @@ class Get extends DB
         return $columnsAndTypes;
     }
 
-    public function getLastId($filepath):int {
-        return intval(Storage::get($this->getFilePath('config/lastId')));
+    public function getLastId($filepath = ''):int {
+        $last_j = Storage::get($this->getFilePath('config/lastId'));
+        $last = json_decode($last_j, true);
+        return $last['id'];
+    }
+
+    public function getCount($filepath = ''):int {
+        $last_j = Storage::get($this->getFilePath('config/lastId'));
+        $last = json_decode($last_j, true);
+        return $last['count'];
     }
 
     public function tailCustom($filepath, $lines = 1, $adaptive = true) {
@@ -274,5 +297,42 @@ class Get extends DB
             return Storage::get($filepath);
         else
             return '';
+    }
+
+    public function getIDsLinear(string $column, mixed $value) {
+        $filepath = Storage::path($this->getFilePath($column));
+        $handle = @fopen($filepath, "r");
+        $IDs = [];
+        if ($handle) {
+            while (($json = fgets($handle, 4096)) !== false) {
+                $buffer = json_decode($json, true);
+                if ($buffer and $buffer['data'][$column] == $value)
+                    $IDs[] = $buffer['id'];
+            }
+            fclose($handle);
+        }
+        return $IDs;
+    }
+
+    public function getRowsLinear(array $IDs):array {
+        $ROWs = [];
+        foreach ($IDs as $id) {
+            $ROWs[] = $this->getRowLinear($id);
+        }
+        return $ROWs;
+    }
+
+    public function getRowLinear($id):array {
+        $filepath = Storage::path($this->getFilePath($this->name));
+        $handle = @fopen($filepath, "r");
+        if ($handle) {
+            while (($json = fgets($handle, 4096)) !== false) {
+                $buffer = json_decode($json, true);
+                if ($buffer and $buffer['id'] == $id)
+                    break;
+            }
+            fclose($handle);
+        }
+        return $buffer;
     }
 }

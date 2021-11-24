@@ -11,9 +11,11 @@ class Delete extends DB
 {
     use HasFactory;
 
-    public function remove(string $column, mixed $value):int {
+    public function remove(string $column, mixed $value, $IDs = null):int {
         $get = new Get($this->name);
-        $IDs = $get->getRows($column, $value, 'IDs');
+        if (!$IDs) {
+            $IDs = $get->getIDs($column, $value);
+        }
         $deletedRows = $this->removeRows($IDs, $this->name);
         $columns = $get->getColumns();
         foreach ($columns as $item) {
