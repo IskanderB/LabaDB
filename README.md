@@ -2,7 +2,7 @@
 
 ### What is it?
 
-It's API aplication is a custom database management system for one table databases.
+It's API application is a custom database management system for one table databases.
 This project was completed as part of the assignment for the Data Management course. 
 
 ### How does that work?
